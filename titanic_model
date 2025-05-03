@@ -1,0 +1,632 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "9c30d4e4",
+   "metadata": {
+    "_cell_guid": "b1076dfc-b9ad-4769-8c92-a6c4dae69d19",
+    "_uuid": "8f2839f25d086af736a60e9eeb907d3b93b6e0e5",
+    "execution": {
+     "iopub.execute_input": "2025-05-03T20:30:31.481460Z",
+     "iopub.status.busy": "2025-05-03T20:30:31.481007Z",
+     "iopub.status.idle": "2025-05-03T20:30:35.441877Z",
+     "shell.execute_reply": "2025-05-03T20:30:35.441103Z"
+    },
+    "papermill": {
+     "duration": 3.96657,
+     "end_time": "2025-05-03T20:30:35.443346",
+     "exception": false,
+     "start_time": "2025-05-03T20:30:31.476776",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "import numpy as np\n",
+    "\n",
+    "from sklearn.ensemble import RandomForestClassifier\n",
+    "from sklearn.model_selection import train_test_split\n",
+    "from sklearn.metrics import accuracy_score"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "d3015aa5",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-05-03T20:30:35.449945Z",
+     "iopub.status.busy": "2025-05-03T20:30:35.449452Z",
+     "iopub.status.idle": "2025-05-03T20:30:35.494903Z",
+     "shell.execute_reply": "2025-05-03T20:30:35.493899Z"
+    },
+    "papermill": {
+     "duration": 0.050004,
+     "end_time": "2025-05-03T20:30:35.496258",
+     "exception": false,
+     "start_time": "2025-05-03T20:30:35.446254",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>PassengerId</th>\n",
+       "      <th>Survived</th>\n",
+       "      <th>Pclass</th>\n",
+       "      <th>Name</th>\n",
+       "      <th>Sex</th>\n",
+       "      <th>Age</th>\n",
+       "      <th>SibSp</th>\n",
+       "      <th>Parch</th>\n",
+       "      <th>Ticket</th>\n",
+       "      <th>Fare</th>\n",
+       "      <th>Cabin</th>\n",
+       "      <th>Embarked</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>892</td>\n",
+       "      <td>0</td>\n",
+       "      <td>3</td>\n",
+       "      <td>Kelly, Mr. James</td>\n",
+       "      <td>male</td>\n",
+       "      <td>34.5</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>330911</td>\n",
+       "      <td>7.8292</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>Q</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>893</td>\n",
+       "      <td>1</td>\n",
+       "      <td>3</td>\n",
+       "      <td>Wilkes, Mrs. James (Ellen Needs)</td>\n",
+       "      <td>female</td>\n",
+       "      <td>47.0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>363272</td>\n",
+       "      <td>7.0000</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>S</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>894</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>Myles, Mr. Thomas Francis</td>\n",
+       "      <td>male</td>\n",
+       "      <td>62.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>240276</td>\n",
+       "      <td>9.6875</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>Q</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>895</td>\n",
+       "      <td>0</td>\n",
+       "      <td>3</td>\n",
+       "      <td>Wirz, Mr. Albert</td>\n",
+       "      <td>male</td>\n",
+       "      <td>27.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>315154</td>\n",
+       "      <td>8.6625</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>S</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>896</td>\n",
+       "      <td>1</td>\n",
+       "      <td>3</td>\n",
+       "      <td>Hirvonen, Mrs. Alexander (Helga E Lindqvist)</td>\n",
+       "      <td>female</td>\n",
+       "      <td>22.0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>3101298</td>\n",
+       "      <td>12.2875</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>S</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   PassengerId  Survived  Pclass  \\\n",
+       "0          892         0       3   \n",
+       "1          893         1       3   \n",
+       "2          894         0       2   \n",
+       "3          895         0       3   \n",
+       "4          896         1       3   \n",
+       "\n",
+       "                                           Name     Sex   Age  SibSp  Parch  \\\n",
+       "0                              Kelly, Mr. James    male  34.5      0      0   \n",
+       "1              Wilkes, Mrs. James (Ellen Needs)  female  47.0      1      0   \n",
+       "2                     Myles, Mr. Thomas Francis    male  62.0      0      0   \n",
+       "3                              Wirz, Mr. Albert    male  27.0      0      0   \n",
+       "4  Hirvonen, Mrs. Alexander (Helga E Lindqvist)  female  22.0      1      1   \n",
+       "\n",
+       "    Ticket     Fare Cabin Embarked  \n",
+       "0   330911   7.8292   NaN        Q  \n",
+       "1   363272   7.0000   NaN        S  \n",
+       "2   240276   9.6875   NaN        Q  \n",
+       "3   315154   8.6625   NaN        S  \n",
+       "4  3101298  12.2875   NaN        S  "
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "dataset = pd.read_csv('/kaggle/input/test-file/tested.csv')\n",
+    "dataset.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "a3c5271c",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-05-03T20:30:35.502985Z",
+     "iopub.status.busy": "2025-05-03T20:30:35.502435Z",
+     "iopub.status.idle": "2025-05-03T20:30:35.509398Z",
+     "shell.execute_reply": "2025-05-03T20:30:35.508620Z"
+    },
+    "papermill": {
+     "duration": 0.011704,
+     "end_time": "2025-05-03T20:30:35.510698",
+     "exception": false,
+     "start_time": "2025-05-03T20:30:35.498994",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "dataset.replace([np.inf, -np.inf], np.nan, inplace=True)\n",
+    "dataset.fillna(0, inplace=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "296ed101",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-05-03T20:30:35.517328Z",
+     "iopub.status.busy": "2025-05-03T20:30:35.517024Z",
+     "iopub.status.idle": "2025-05-03T20:30:35.546173Z",
+     "shell.execute_reply": "2025-05-03T20:30:35.545152Z"
+    },
+    "papermill": {
+     "duration": 0.034337,
+     "end_time": "2025-05-03T20:30:35.547843",
+     "exception": false,
+     "start_time": "2025-05-03T20:30:35.513506",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "   PassengerId  Survived  Pclass  \\\n",
+      "0          892         0       3   \n",
+      "1          893         1       3   \n",
+      "2          894         0       2   \n",
+      "3          895         0       3   \n",
+      "4          896         1       3   \n",
+      "\n",
+      "                                           Name     Sex   Age  SibSp  Parch  \\\n",
+      "0                              Kelly, Mr. James    male  34.5      0      0   \n",
+      "1              Wilkes, Mrs. James (Ellen Needs)  female  47.0      1      0   \n",
+      "2                     Myles, Mr. Thomas Francis    male  62.0      0      0   \n",
+      "3                              Wirz, Mr. Albert    male  27.0      0      0   \n",
+      "4  Hirvonen, Mrs. Alexander (Helga E Lindqvist)  female  22.0      1      1   \n",
+      "\n",
+      "    Ticket     Fare Cabin Embarked  \n",
+      "0   330911   7.8292     0        Q  \n",
+      "1   363272   7.0000     0        S  \n",
+      "2   240276   9.6875     0        Q  \n",
+      "3   315154   8.6625     0        S  \n",
+      "4  3101298  12.2875     0        S  \n",
+      "Index(['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp',\n",
+      "       'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked'],\n",
+      "      dtype='object')\n",
+      "   PassengerId  Survived  Pclass  \\\n",
+      "0          892         0       3   \n",
+      "1          893         1       3   \n",
+      "2          894         0       2   \n",
+      "3          895         0       3   \n",
+      "4          896         1       3   \n",
+      "\n",
+      "                                           Name  Sex   Age  SibSp  Parch  \\\n",
+      "0                              Kelly, Mr. James    0  34.5      0      0   \n",
+      "1              Wilkes, Mrs. James (Ellen Needs)    1  47.0      1      0   \n",
+      "2                     Myles, Mr. Thomas Francis    0  62.0      0      0   \n",
+      "3                              Wirz, Mr. Albert    0  27.0      0      0   \n",
+      "4  Hirvonen, Mrs. Alexander (Helga E Lindqvist)    1  22.0      1      1   \n",
+      "\n",
+      "    Ticket     Fare Cabin Embarked  \n",
+      "0   330911   7.8292     0        Q  \n",
+      "1   363272   7.0000     0        S  \n",
+      "2   240276   9.6875     0        Q  \n",
+      "3   315154   8.6625     0        S  \n",
+      "4  3101298  12.2875     0        S  \n"
+     ]
+    }
+   ],
+   "source": [
+    "print(dataset.head())\n",
+    "print(dataset.columns)\n",
+    "dataset['Age'] = dataset['Age'].fillna(dataset['Age'].median())\n",
+    "dataset['Fare'] = dataset['Fare'].fillna(dataset['Fare'].median())\n",
+    "\n",
+    "if 'Embarked' in dataset.columns:\n",
+    "    dataset['Embarked'] = dataset['Embarked'].fillna(dataset['Embarked'].mode()[0])\n",
+    "else:\n",
+    "    dataset['Embarked_S'] = dataset['Embarked_S'].fillna(False)\n",
+    "    dataset['Embarked_Q'] = dataset['Embarked_Q'].fillna(False)\n",
+    "\n",
+    "if dataset['Sex'].notna().any():\n",
+    "    dataset['Sex'] = dataset['Sex'].fillna(dataset['Sex'].mode()[0])\n",
+    "else:\n",
+    "    dataset['Sex'] = dataset['Sex'].fillna('male')  # or 'female' based on domain logic\n",
+    "\n",
+    "dataset['Sex'] = dataset['Sex'].map({'male': 0, 'female': 1})\n",
+    "\n",
+    "dataset.replace([np.inf, -np.inf], np.nan, inplace=True)\n",
+    "dataset.fillna(0, inplace=True)\n",
+    "\n",
+    "print(dataset.head())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "5e27fd2a",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-05-03T20:30:35.554980Z",
+     "iopub.status.busy": "2025-05-03T20:30:35.554665Z",
+     "iopub.status.idle": "2025-05-03T20:30:35.571702Z",
+     "shell.execute_reply": "2025-05-03T20:30:35.570588Z"
+    },
+    "papermill": {
+     "duration": 0.022463,
+     "end_time": "2025-05-03T20:30:35.573263",
+     "exception": false,
+     "start_time": "2025-05-03T20:30:35.550800",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Index(['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp',\n",
+      "       'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked_Q', 'Embarked_S'],\n",
+      "      dtype='object')\n"
+     ]
+    }
+   ],
+   "source": [
+    "dataset = pd.get_dummies(dataset, columns=['Embarked'], drop_first=True)\n",
+    "print(dataset.columns)\n",
+    "features = ['Pclass', 'Sex', 'Age', 'SibSp', 'Parch', 'Fare', 'Embarked_Q', 'Embarked_S']\n",
+    "X = dataset[features]\n",
+    "y = dataset['Survived']\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "52a25d7e",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-05-03T20:30:35.580435Z",
+     "iopub.status.busy": "2025-05-03T20:30:35.580075Z",
+     "iopub.status.idle": "2025-05-03T20:30:35.750564Z",
+     "shell.execute_reply": "2025-05-03T20:30:35.749421Z"
+    },
+    "papermill": {
+     "duration": 0.175847,
+     "end_time": "2025-05-03T20:30:35.752005",
+     "exception": false,
+     "start_time": "2025-05-03T20:30:35.576158",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Accuracy: 1.0\n",
+      "              precision    recall  f1-score   support\n",
+      "\n",
+      "           0       1.00      1.00      1.00        50\n",
+      "           1       1.00      1.00      1.00        34\n",
+      "\n",
+      "    accuracy                           1.00        84\n",
+      "   macro avg       1.00      1.00      1.00        84\n",
+      "weighted avg       1.00      1.00      1.00        84\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n",
+    "model = RandomForestClassifier(n_estimators=100, random_state=42)\n",
+    "model.fit(X_train, y_train)\n",
+    "y_pred = model.predict(X_test)\n",
+    "from sklearn.metrics import accuracy_score, classification_report\n",
+    "print(\"Accuracy:\", accuracy_score(y_test, y_pred))\n",
+    "print(classification_report(y_test, y_pred))\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "0444a4ac",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-05-03T20:30:35.760113Z",
+     "iopub.status.busy": "2025-05-03T20:30:35.759824Z",
+     "iopub.status.idle": "2025-05-03T20:30:35.773466Z",
+     "shell.execute_reply": "2025-05-03T20:30:35.772597Z"
+    },
+    "papermill": {
+     "duration": 0.020306,
+     "end_time": "2025-05-03T20:30:35.775211",
+     "exception": false,
+     "start_time": "2025-05-03T20:30:35.754905",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "y_pred = model.predict(X_test)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "a63a18c5",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-05-03T20:30:35.782174Z",
+     "iopub.status.busy": "2025-05-03T20:30:35.781877Z",
+     "iopub.status.idle": "2025-05-03T20:30:35.807105Z",
+     "shell.execute_reply": "2025-05-03T20:30:35.806276Z"
+    },
+    "papermill": {
+     "duration": 0.030667,
+     "end_time": "2025-05-03T20:30:35.808781",
+     "exception": false,
+     "start_time": "2025-05-03T20:30:35.778114",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Accuracy: 1.0\n",
+      "\n",
+      "Classification Report:\n",
+      "               precision    recall  f1-score   support\n",
+      "\n",
+      "           0       1.00      1.00      1.00        50\n",
+      "           1       1.00      1.00      1.00        34\n",
+      "\n",
+      "    accuracy                           1.00        84\n",
+      "   macro avg       1.00      1.00      1.00        84\n",
+      "weighted avg       1.00      1.00      1.00        84\n",
+      "\n",
+      "\n",
+      "Confusion Matrix:\n",
+      " [[50  0]\n",
+      " [ 0 34]]\n",
+      "     Pclass  Sex   Age  SibSp  Parch      Fare  Embarked_Q  Embarked_S  \\\n",
+      "321       3    0  25.0      0      0    7.2292       False       False   \n",
+      "324       1    1  39.0      0      0  211.3375       False        True   \n",
+      "388       3    0  21.0      0      0    7.7500        True       False   \n",
+      "56        3    0  35.0      0      0    7.8958       False        True   \n",
+      "153       3    1  36.0      0      2   12.1833       False        True   \n",
+      "30        2    0  50.0      1      0   26.0000       False        True   \n",
+      "72        3    1  29.0      0      0    7.9250       False        True   \n",
+      "82        1    0  49.0      0      0   26.0000       False        True   \n",
+      "258       2    1  19.0      0      0   13.0000       False        True   \n",
+      "416       3    0   0.0      0      0    8.0500       False        True   \n",
+      "\n",
+      "     Actual  Predicted  \n",
+      "321       0          0  \n",
+      "324       1          1  \n",
+      "388       0          0  \n",
+      "56        0          0  \n",
+      "153       1          1  \n",
+      "30        0          0  \n",
+      "72        1          1  \n",
+      "82        0          0  \n",
+      "258       1          1  \n",
+      "416       0          0  \n"
+     ]
+    }
+   ],
+   "source": [
+    "from sklearn.metrics import accuracy_score, classification_report, confusion_matrix\n",
+    "print(\"Accuracy:\", accuracy_score(y_test, y_pred))\n",
+    "print(\"\\nClassification Report:\\n\", classification_report(y_test, y_pred))\n",
+    "\n",
+    "print(\"\\nConfusion Matrix:\\n\", confusion_matrix(y_test, y_pred))\n",
+    "\n",
+    "results_df = X_test.copy()\n",
+    "results_df['Actual'] = y_test\n",
+    "results_df['Predicted'] = y_pred\n",
+    "\n",
+    "print(results_df.head(10))\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "6db4890d",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-05-03T20:30:35.816203Z",
+     "iopub.status.busy": "2025-05-03T20:30:35.815454Z",
+     "iopub.status.idle": "2025-05-03T20:30:35.836945Z",
+     "shell.execute_reply": "2025-05-03T20:30:35.836025Z"
+    },
+    "papermill": {
+     "duration": 0.026561,
+     "end_time": "2025-05-03T20:30:35.838387",
+     "exception": false,
+     "start_time": "2025-05-03T20:30:35.811826",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Survival Prediction: Did not survive\n"
+     ]
+    }
+   ],
+   "source": [
+    "new_passenger = pd.DataFrame([{\n",
+    "    'Pclass': 3,\n",
+    "    'Sex': 'female',\n",
+    "    'Age': 28,\n",
+    "    'SibSp': 0,\n",
+    "    'Parch': 0,\n",
+    "    'Fare': 7.25,\n",
+    "    'Embarked': 'S'\n",
+    "}])\n",
+    "\n",
+    "new_passenger_encoded = pd.get_dummies(new_passenger)\n",
+    "new_passenger_encoded = new_passenger_encoded.reindex(columns=X.columns, fill_value=0)\n",
+    "\n",
+    "prediction = model.predict(new_passenger_encoded)\n",
+    "print(\"Survival Prediction:\", \"Survived\" if prediction[0] == 1 else \"Did not survive\")\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "2954630e",
+   "metadata": {
+    "papermill": {
+     "duration": 0.002786,
+     "end_time": "2025-05-03T20:30:35.844394",
+     "exception": false,
+     "start_time": "2025-05-03T20:30:35.841608",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kaggle": {
+   "accelerator": "none",
+   "dataSources": [
+    {
+     "datasetId": 826163,
+     "sourceId": 2879186,
+     "sourceType": "datasetVersion"
+    }
+   ],
+   "dockerImageVersionId": 31012,
+   "isGpuEnabled": false,
+   "isInternetEnabled": true,
+   "language": "python",
+   "sourceType": "notebook"
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.11.11"
+  },
+  "papermill": {
+   "default_parameters": {},
+   "duration": 9.889647,
+   "end_time": "2025-05-03T20:30:36.567751",
+   "environment_variables": {},
+   "exception": null,
+   "input_path": "__notebook__.ipynb",
+   "output_path": "__notebook__.ipynb",
+   "parameters": {},
+   "start_time": "2025-05-03T20:30:26.678104",
+   "version": "2.6.0"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
